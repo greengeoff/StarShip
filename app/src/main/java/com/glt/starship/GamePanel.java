@@ -190,45 +190,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             bg.update();
             player.update();
 
-            /*
-            //add missiles and their timer
-            long missileElapsedTime = (System.nanoTime() - missileStartTime) / 1000000;
-            if (missileElapsedTime > (1000 - player.getScore() / 4)) {
-                //System.out.println("creating missile");
-                //first missile in middle
-                if (missiles.size() == 0) {
-                    missiles.add(new Missile(BitmapFactory.decodeResource(getResources(), R.drawable.missile),
-                            (int) WIDTH + 10, (int) HEIGHT / 2, 40, 15, player.getScore(), 12));
-                } else {
-                    missiles.add(new Missile(BitmapFactory.decodeResource(getResources(), R.drawable.missile),
-                            (int) WIDTH + 10, (int) (rand.nextDouble() * HEIGHT), 40, 15, player.getScore(), 12));
-                }
-                // play missile effect
-                if(loaded) {
-                    soundPool.play(soundMap.get(SOUND_BULLET), 0.1f, 0.2f, 1, 0, 1f);
-                }else
-                    System.out.println("couldn't  play, wasn't loaded");
-                // reset timer
-                missileStartTime = System.nanoTime();
-            }
-            // remove collided missiles
-            for (int i = 0; i < missiles.size(); i++) {
-                missiles.get(i).update();
-                if (collision(missiles.get(i), player)) {
-                    player.setPlaying(false);
-                    if(loaded) {
-                        soundPool.play(soundMap.get(SOUND_EXPLOSION), 0.2f, 0.2f, 1, 0, 1.75f);
-                    }else
-                        System.out.println("couldn't  play, wasn't loaded");
-                    break;
-                }
-                if (missiles.get(i).getX() < -100) {
-                    missiles.remove(i);
-                    i--;
-                    break;
-                }
-            }
-            */
             //check lasers
             long laserElapsedTime =  (System.nanoTime() - laserStartTime)/1000000;
             if(player.getScore() > 9 && laserElapsedTime > 2000 - player.getScore()/5){
@@ -331,7 +292,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
     @Override
     public void draw(Canvas canvas){
-        //System.out.println("in Draw");
+        // scale the canvas according to the dimensions of the scrolling background
         super.draw(canvas);
         final float scaleX = getWidth()/WIDTH;
         final float scaleY = getHeight()/HEIGHT;
@@ -349,7 +310,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 p.draw(canvas);
             }
             for(GreenLaser g: greenLasers){
-                System.out.println("draw green");
                 g.draw(canvas);
             }
             for(Laser l: lasers){
@@ -368,17 +328,19 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     public void newGame(){
         disappear = false;
 
+        //remove all obstacles
         greenLasers.clear();
         lasers.clear();
         planets.clear();
 
-
+        //restart position and speed
         player.setDy(0);
         player.setY((int)HEIGHT/2 + player.height/2);
 
         if(player.getScore() > best){
             //reset high score
             best = player.getScore();
+            // store high score on disk
             SharedPreferences sharedPref = context.getSharedPreferences(context.getString(R.string.pref_key),Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putInt(context.getString(R.string.saved_high_score), best);
@@ -409,7 +371,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             canvas.drawText("PRESS TO RISE" ,WIDTH/2 - 50, HEIGHT/2 + 20, p);
 
             Drawable d = getResources().getDrawable(R.drawable.ic_arrow_upward_black_24dp);
-            d.setBounds( (int) HEIGHT/2 -100, (int)HEIGHT/2, (int) HEIGHT/2 -50, (int)HEIGHT/2 +50);
+            d.setBounds( (int) HEIGHT/2 -100, (int)HEIGHT/2 - 100, (int) HEIGHT/2 -50, (int)HEIGHT/2 +50);
             d.draw(canvas);
 
             canvas.drawText("RELEASE TO FALL " ,WIDTH/2 - 50, HEIGHT/2 + 40, p);

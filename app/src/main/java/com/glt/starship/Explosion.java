@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
 /**
- * Created by geo on 3/16/17.
+ * Explosion animation for the player's ship
  */
 
 class Explosion extends GameObject{

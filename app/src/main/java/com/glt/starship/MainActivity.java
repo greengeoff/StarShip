@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         if(mService != null) {
             mService.stopMusic();
         }
+        // stop music service
         Intent music = new Intent();
         music.setClass(this, MusicService.class);
         stopService(music);
